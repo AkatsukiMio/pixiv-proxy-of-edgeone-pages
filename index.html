@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Pixiv图片加速下载代理 - 流程访问Pixiv图片</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <style>
         :root {
-            /* 浅色模式颜色 */
             --bg-color: #f8f9fa;
             --text-color: #333;
             --card-bg: #ffffff;
             --border-color: #ddd;
-            --btn-primary: #6c757d; /* 中性灰色，避免高饱和度蓝/紫 */
+            --btn-primary: #6c757d;
             --btn-hover: #5a6268;
             --btn-go: #495057;
             --btn-go-hover: #343a40;
@@ -19,7 +19,6 @@
 
         @media (prefers-color-scheme: dark) {
             :root {
-                /* 深色模式颜色 */
                 --bg-color: #1a1a1a;
                 --text-color: #e0e0e0;
                 --card-bg: #2d2d2d;
@@ -41,15 +40,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* 垂直居中，类似搜索引擎起始页 */
+            justify-content: center;
             padding: 2rem;
             transition: background-color 0.3s, color 0.3s;
         }
 
-        .container {
-            width: 100%;
-            max-width: 600px;
-        }
+        .container { width: 100%; max-width: 600px; }
 
         h1 {
             text-align: center;
@@ -58,7 +54,6 @@
             font-size: 2rem;
         }
 
-        /* 搜索框样式 */
         .input-group {
             display: flex;
             gap: 0.5rem;
@@ -69,7 +64,7 @@
             flex: 1;
             padding: 0.75rem 1rem;
             border: 1px solid var(--border-color);
-            border-radius: 24px; /* 胶囊形状 */
+            border-radius: 24px;
             font-size: 1rem;
             background-color: var(--card-bg);
             color: var(--text-color);
@@ -87,7 +82,7 @@
             background-color: var(--btn-primary);
             color: white;
             border: none;
-            border-radius: 24px; /* 胶囊形状 */
+            border-radius: 24px;
             cursor: pointer;
             font-size: 1rem;
             transition: background-color 0.3s;
@@ -96,14 +91,13 @@
 
         #convertBtn:hover { background-color: var(--btn-hover); }
 
-        /* 结果卡片样式 */
         .result-card {
             background-color: var(--card-bg);
             border-radius: 12px;
             overflow: hidden;
             width: 100%;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            display: none; /* 默认隐藏 */
+            display: none;
             animation: fadeIn 0.3s ease-in-out;
         }
 
@@ -119,18 +113,15 @@
             background-color: rgba(0,0,0,0.03);
         }
 
-        /* 按钮组：根据屏幕大小自动左右或上下分布 */
         .button-group {
             display: flex;
             gap: 0.75rem;
             padding: 1rem;
-            flex-direction: row; /* 默认左右分布 */
+            flex-direction: row;
         }
 
         @media (max-width: 480px) {
-            .button-group {
-                flex-direction: column; /* 小屏幕上下分布 */
-            }
+            .button-group { flex-direction: column; }
         }
 
         .btn {
@@ -167,7 +158,6 @@
             <button id="convertBtn">转换</button>
         </div>
 
-        <!-- 结果展示区域 -->
         <div class="result-card" id="resultCard">
             <img id="previewImg" class="preview-img" src="" alt="预览图" />
             <div class="button-group">
@@ -175,7 +165,7 @@
                     <span id="copyText">复制链接</span>
                 </button>
                 <button class="btn btn-go" id="goBtn">
-                    跳转参考
+                    跳转查看
                 </button>
             </div>
         </div>
@@ -193,16 +183,15 @@
 
             let currentNewUrl = '';
 
-            // 转换链接函数
+            // 核心替换逻辑：获取当前页面的域名（包含协议和端口），动态替换
             function convertUrl(url) {
-                return url.replace('https://i.pximg.net/', 'https://i.akatsukimio.top/');
+                const currentOrigin = window.location.origin;
+                return url.replace('https://i.pximg.net/', currentOrigin + '/');
             }
 
-            // 处理转换逻辑（无校验）
             function handleConvert() {
                 const originalUrl = inputUrl.value.trim();
                 
-                // 简单的格式检查
                 if (!originalUrl.includes('i.pximg.net')) {
                     alert('请确保输入包含 i.pximg.net 的链接');
                     return;
@@ -210,15 +199,11 @@
 
                 currentNewUrl = convertUrl(originalUrl);
                 
-                // 直接设置预览图并显示卡片
                 previewImg.src = currentNewUrl;
                 resultCard.style.display = 'block';
-                
-                // 重置复制按钮文本
                 copyText.textContent = '复制链接';
             }
 
-            // 复制链接功能
             copyBtn.addEventListener('click', () => {
                 navigator.clipboard.writeText(currentNewUrl).then(() => {
                     copyText.textContent = '已复制！';
@@ -228,12 +213,10 @@
                 });
             });
 
-            // 跳转功能
             goBtn.addEventListener('click', () => {
                 window.open(currentNewUrl, '_blank');
             });
 
-            // 绑定转换事件
             convertBtn.addEventListener('click', handleConvert);
             inputUrl.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') handleConvert();
